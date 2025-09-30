@@ -117,3 +117,64 @@ app.delete('/products/:id', async (req, res) => {
     res.status(400).json({ error: e.message });
   }
 });
+
+app.post('/user', async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+    const user = await prisma.user.create({
+      data: { name, email, password }
+    });
+    res.status(201).json(user);
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
+});
+
+// GET /users - lista todos os usuários
+app.get('/users', async (req, res) => {
+  try {
+    const users = await prisma.user.findMany();
+    res.json(users);
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
+});
+
+// GET /user/:id - retorna um usuário específico
+app.get('/user/:id', async (req, res) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: Number(req.params.id) }
+    });
+    if (!user) return res.status(404).json({ error: 'Usuário não encontrado' });
+    res.json(user);
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
+});
+
+// PUT /user/:id - atualiza dados de um usuário
+app.put('/user/:id', async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+    const updatedUser = await prisma.user.update({
+      where: { id: Number(req.params.id) },
+      data: { name, email, password },
+    });
+    res.json(updatedUser);
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
+});
+
+// DELETE /user/:id - deleta um usuário
+app.delete('/user/:id', async (req, res) => {
+  try {
+    const deletedUser = await prisma.user.delete({
+      where: { id: Number(req.params.id) },
+    });
+    res.json(deletedUser);
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
+});
