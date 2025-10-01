@@ -1,16 +1,10 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = mysql
-  url      = env("mysql://mdrs67:Souesquecido2@mysql-mdrs67.alwaysdata.net:3306/mdrs67_marketplace_dsw")
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -19,14 +13,16 @@ model User {
   email    String   @unique
   password String
   stores   Store[]
+  @@map("Users")
 }
 
 model Store {
-  id        Int       @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   name      String
   userId    Int
-  user      User      @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
   products  Product[]
+  @@map("Stores")
 }
 
 model Product {
@@ -35,4 +31,5 @@ model Product {
   price    Float
   storeId  Int
   store    Store    @relation(fields: [storeId], references: [id])
+  @@map("Products")
 }
